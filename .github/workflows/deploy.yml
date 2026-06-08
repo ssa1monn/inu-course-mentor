@@ -1,9 +1,11 @@
 name: Deploy
 
-# main 브랜치 push 시 배포 타깃 VM에 SSH 접속하여 docker-compose 갱신.
-# 사용 전 GitHub Secrets에 등록 필요:
-#   DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY, DEPLOY_PATH
-# (배포 타깃/시크릿 등록 및 push는 사용자가 직접 수행)
+# main 브랜치 push 시 배포 서버에 SSH 접속하여 docker-compose를 갱신(자동 배포).
+# 사용 전 GitHub Secrets에 등록 필요 (Settings → Secrets and variables → Actions):
+#   DEPLOY_HOST     = 서버 공인 IP (예: 165.22.52.6)
+#   DEPLOY_USER     = root
+#   DEPLOY_PASSWORD = droplet 비밀번호
+#   DEPLOY_PATH     = /root/inu-course-mentor
 
 on:
   push:
@@ -14,17 +16,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy over SSH
+      - name: Deploy over SSH (password)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
             git pull origin main
-            docker compose pull || true
             docker compose up -d --build
             docker image prune -f

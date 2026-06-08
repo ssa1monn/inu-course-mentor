@@ -52,12 +52,12 @@ export default function Login() {
         <div className="mb-6"><Brand /></div>
         <div className="card" style={{ padding: 30 }}>
           <h1 className="mb-1 text-[21px] font-extrabold text-fg">다시 오신 걸 환영해요</h1>
-          <p className="mb-5 text-sm text-fg-muted">인천대 계정으로 로그인하세요.</p>
+          <p className="mb-5 text-sm text-fg-muted">이메일 또는 아이디로 로그인하세요.</p>
 
           {error && <div className="mb-4 rounded-lg px-3 py-2 text-sm" style={{ background: "var(--danger-soft)", color: "var(--danger)" }}>{error}</div>}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-            <div><label className="field-label">이메일</label><Field icon="mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@inu.ac.kr" required /></div>
+            <div><label className="field-label">이메일 또는 아이디</label><Field icon="mail" type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@inu.ac.kr" required /></div>
             <div><label className="field-label">비밀번호</label><Field icon="lock" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required /></div>
             <button className="btn btn-primary btn-lg btn-block mt-1.5" type="submit" disabled={loading}>{loading ? "로그인 중..." : "로그인"}</button>
           </form>

@@ -18,7 +18,7 @@ function Brand() {
 export default function Register() {
   const [form, setForm] = useState({
     email: "", password: "", name: "",
-    department: "컴퓨터공학부", admissionYear: 2022, grade: 3, semester: 1,
+    department: "", admissionYear: 2026, grade: 1, semester: 1,
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,8 @@ export default function Register() {
     setError("");
     setLoading(true);
     try {
-      const { data } = await api.post("/auth/register", form);
+      const payload = { ...form, department: form.department.trim() || "컴퓨터공학부" };
+      const { data } = await api.post("/auth/register", payload);
       setAuth(data.token, data.user);
       navigate("/profile");
     } catch (err) {
@@ -54,12 +55,12 @@ export default function Register() {
           {error && <div className="mb-4 rounded-lg px-3 py-2 text-sm" style={{ background: "var(--danger-soft)", color: "var(--danger)" }}>{error}</div>}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-            <div><label className="field-label">이메일</label><input className="field" type="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@inu.ac.kr" required /></div>
+            <div><label className="field-label">이메일 또는 아이디</label><input className="field" type="text" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@inu.ac.kr" required /></div>
             <div className="grid grid-cols-2 gap-2.5">
               <div><label className="field-label">비밀번호</label><input className="field" type="password" value={form.password} onChange={(e) => update("password", e.target.value)} placeholder="8자 이상" required /></div>
-              <div><label className="field-label">이름 (선택)</label><input className="field" value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="고우석" /></div>
+              <div><label className="field-label">이름</label><input className="field" value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="홍길동" required /></div>
             </div>
-            <div><label className="field-label">학과</label><input className="field" value={form.department} onChange={(e) => update("department", e.target.value)} placeholder="컴퓨터공학부" required /></div>
+            <div><label className="field-label">학과</label><input className="field" value={form.department} onChange={(e) => update("department", e.target.value)} placeholder="컴퓨터공학부" /></div>
             <div className="grid grid-cols-3 gap-2.5">
               <div><label className="field-label">입학년도</label>
                 <select className="field" value={form.admissionYear} onChange={(e) => update("admissionYear", Number(e.target.value))}>

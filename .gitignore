@@ -23,3 +23,8 @@ backend/prisma/*.db
 .DS_Store
 .vscode/
 coverage/
+
+
+# docs
+DEPLOY.md
+docs/
