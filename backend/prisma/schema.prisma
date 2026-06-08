@@ -1,0 +1,106 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int              @id @default(autoincrement())
+  email           String           @unique
+  passwordHash    String
+  name            String?
+  department      String
+  admissionYear   Int
+  grade           Int
+  semester        Int
+  isAdmin         Boolean          @default(false)
+  createdAt       DateTime         @default(now())
+  preference      Preference?
+  enrollments     Enrollment[]
+  recommendations Recommendation[]
+}
+
+model Preference {
+  id           Int    @id @default(autoincrement())
+  userId       Int    @unique
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  interestJob  String
+  subjectTaste String // "이론" | "실습" | "균형" 등
+  interestArea String? // 관심 분야 자유 입력
+}
+
+model Course {
+  id          Int       @id @default(autoincrement())
+  semesterKey String // 예: "2026-1"
+  courseCode  String // 학수번호
+  title       String
+  titleEn     String?
+  professor   String?
+  college     String?
+  department  String
+  targetGrade String // "전학년" | "1".."4"
+  courseType  String // 이수구분
+  courseArea  String?
+  credits     Int
+  room        String?
+  language    String?
+  grading     String?
+  classType   String? // 수업유형
+  meetings    Meeting[]
+
+  @@unique([semesterKey, courseCode])
+  @@index([semesterKey, department])
+  @@index([semesterKey, courseType])
+}
+
+model Meeting {
+  id       Int     @id @default(autoincrement())
+  courseId Int
+  course   Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  day      Int // 0=월 .. 6=일
+  startMin Int // 자정 기준 분
+  endMin   Int
+  room     String?
+}
+
+model Enrollment {
+  id          Int     @id @default(autoincrement())
+  userId      Int
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseCode  String
+  title       String
+  semesterKey String
+  status      String // "taken" | "planned"
+  credits     Int
+  courseType  String
+  grade       String? // 등급 (A+, B0, P 등)
+  points      Float? // 평점 (4.5 등). P/이수인정 등은 null
+  year        Int? // 수강 년도
+  term        String? // 학기 (1학기/2학기/계절학기)
+  source      String  @default("manual") // "manual" | "grade"
+}
+
+model GradReqRule {
+  id              Int     @id @default(autoincrement())
+  department      String
+  admissionYear   Int
+  area            String // "전공기초","전공핵심","전공심화","기초교양","핵심교양","심화교양","총학점" 등
+  requiredCredits Int
+  etcRequirement  String?
+
+  @@index([department, admissionYear])
+}
+
+model Recommendation {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  semesterKey    String
+  contextSummary String
+  aiAdvice       String
+  createdAt      DateTime @default(now())
+}

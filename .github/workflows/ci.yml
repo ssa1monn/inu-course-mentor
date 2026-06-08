@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # --- Backend ---
+      - name: Backend install
+        working-directory: ./backend
+        run: npm install
+
+      - name: Backend prisma generate
+        working-directory: ./backend
+        run: npx prisma generate
+
+      # --- Frontend ---
+      - name: Frontend install
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Frontend build
+        working-directory: ./frontend
+        run: npm run build
+
+      # --- Docker build 검증 (이미지가 정상 빌드되는지) ---
+      - name: Prepare env for compose interpolation
+        run: cp .env.example .env
+
+      - name: Docker compose build
+        run: docker compose build

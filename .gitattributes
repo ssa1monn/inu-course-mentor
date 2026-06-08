@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# 쉘 스크립트는 항상 LF (리눅스 서버에서 CRLF면 실행 오류)
+*.sh text eol=lf
