@@ -6,10 +6,6 @@
 
 웹프로그래밍 기말 프로젝트 · 컴퓨터공학부 202201642 고우석
 
-## 문서
-- [PRD](./docs/PRD.md) · [SPEC](./docs/SPEC.md) · [ROADMAP](./docs/ROADMAP.md)
-- [DEPLOY](./DEPLOY.md) — 배포 가이드(DigitalOcean)
-
 ## 기술 스택
 - **Frontend**: React 18 + Vite, React Router, Zustand(persist), axios, Tailwind CSS, react-markdown
 - **Backend**: Node.js + Express, Prisma, JWT(jsonwebtoken)+bcrypt, multer, xlsx(SheetJS)
